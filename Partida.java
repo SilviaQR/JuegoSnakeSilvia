@@ -29,7 +29,7 @@ public class Partida extends Application
     private static int LONGITUD_SERPIENTE = 3;
     private static int POS_X = 350;
     private static int POS_Y = 250;
-    private ArrayList<Serpiente> serpientes;
+    //private ArrayList<Serpiente> serpientes;
     private Manzana[] manzanas;
 
     public static void main(String args[]){
@@ -44,17 +44,10 @@ public class Partida extends Application
         escena.setFill(Color.GREEN);
 
         // Creamos la serpiente
-        serpientes = new ArrayList<>();
-        Serpiente serp = new Serpiente((int) escena.getWidth(), 0, (int) escena.getHeight(), 0);
-        contenedor.getChildren().add(serp);
-        serpientes.add(serp);
 
-        for(int i = 0; i < LONGITUD_SERPIENTE; i++){
-            Serpiente serpi = new Serpiente((int) escena.getWidth(), 0, (int) escena.getHeight(), 0);
-            serpi.setX(serpientes.get(i).getX() + 17);
-            serpientes.add(serpi);
-            contenedor.getChildren().add(serpi);
-        }
+        Serpiente serp = new Serpiente((int) escena.getWidth(), 0, (int) escena.getHeight(), 0);
+        serp.anadirA(contenedor);
+        //serpientes.add(serp);
 
         puntuacion = 0;
         Label puntos = new Label("Puntuación: " + puntuacion);
@@ -68,17 +61,13 @@ public class Partida extends Application
         manzanas[0] = manz;
         Timeline timeline = new Timeline();
         KeyFrame kf = new KeyFrame((Duration.seconds(0.017)), event ->{
-
-                    for(Serpiente sierpe : serpientes){
-
-                        sierpe.mover();
-                        if(manzanas[0].comprobarChoque(serp) == true){
-                            manz.setVisible(false);
-                            contenedor.getChildren().remove(manzanas[0]);
-
-                            manzanas[0] = null;
-                            puntuacion = puntuacion + 10;
-                        }
+                    serp.mover();
+                    if(serp.comerManzana(manzanas[0])){
+                        Serpiente nuevaSerp = new Serpiente((int) escena.getWidth(), 0, (int) escena.getHeight(), 0);
+                        //serpientes.add(nuevaSerp);
+                        //contenedor.getChildren().remove(manz);
+                        //contenedor.getChildren().add(nuevaSerp);
+                        puntuacion = puntuacion + 10;
                     }
 
                 });
@@ -86,22 +75,18 @@ public class Partida extends Application
         escena.setOnKeyPressed(new EventHandler<KeyEvent>() {
                 @Override
                 public void handle(KeyEvent event) {
-                    for(Serpiente sierpe : serpientes){
-                        sierpe.mover();
-                        if (event.getCode() == KeyCode.LEFT) {
-                            sierpe.moverALaIzquierda();
-                        }
-                        else if(event.getCode() == KeyCode.RIGHT){
-                            sierpe.moverALaDerecha();
-                        }
-                        else if(event.getCode() == KeyCode.UP){
-                            sierpe.moverArriba();
-                        }
-                        else if(event.getCode() == KeyCode.DOWN){
-                            sierpe.moverAbajo();
-                        }
+                    if (event.getCode() == KeyCode.LEFT) {
+                        serp.moverALaIzquierda();
                     }
-
+                    else if(event.getCode() == KeyCode.RIGHT){
+                        serp.moverALaDerecha();
+                    }
+                    else if(event.getCode() == KeyCode.UP){
+                        serp.moverArriba();
+                    }
+                    else if(event.getCode() == KeyCode.DOWN){
+                        serp.moverAbajo();
+                    }
                 }
             });
         timeline.setCycleCount(Animation.INDEFINITE);
