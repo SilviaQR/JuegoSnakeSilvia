@@ -26,6 +26,7 @@ public class Serpiente
     private Rectangle cola;
     private ArrayList<Rectangle> colas;
     private int elementosDeLaCola;
+    private boolean ejeX, ejeY = false;
     /**
      * Constructor for objects of class Serpiente
      */
@@ -37,21 +38,21 @@ public class Serpiente
         cabeza.setFill(Color.BLACK);
         cabeza.setX(POS_X);
         cabeza.setY(POS_Y);
-        elementosDeLaCola = 2;
+        elementosDeLaCola = 3;
         colas = new ArrayList<>();
         cola = new Rectangle();
-        cola.setHeight(20);
-        cola.setWidth(20);
-        cola.setFill(Color.WHITE);
+        cola.setHeight(15);
+        cola.setWidth(15);
+        cola.setFill(Color.BLACK);
         cola.setX(POS_X + 17);
         cola.setY(POS_Y);
         colas.add(cola);
-        for(int i = 0; i < elementosDeLaCola; i++){
+        for(int i = 1; i < elementosDeLaCola; i++){
             Rectangle cola1 = new Rectangle();
-            cola1.setHeight(20);
-            cola1.setWidth(20);
-            cola1.setFill(Color.WHITE);
-            cola1.setX(colas.get(i).getX() + 17);
+            cola1.setHeight(15);
+            cola1.setWidth(15);
+            cola1.setFill(Color.BLACK);
+            cola1.setX(colas.get(i - 1).getX() + 17);
             cola1.setY(POS_Y);
             colas.add(cola1);
         }
@@ -61,36 +62,48 @@ public class Serpiente
         this.posicionMinimaY = posicionMinimaY;
     }
 
-    public void moverALaIzquierda()
+    public boolean moverALaIzquierda()
     {
+
         if(cabeza.getBoundsInParent().getMinX() > posicionMinimaX){
             movimientoSerpienteX = -1;
             movimientoSerpienteY = 0;
+            ejeX = true;
         }
+        return ejeX;
     }
 
-    public void moverALaDerecha()
+    public boolean moverALaDerecha()
     {
+
         if(cabeza.getBoundsInParent().getMaxX() < posicionMaximaX){
             movimientoSerpienteX = 1;
             movimientoSerpienteY = 0;
+            ejeX = true;
         }
+        return ejeX;
     }
 
-    public void moverArriba()
+    public boolean moverArriba()
     {
+
         if(cabeza.getBoundsInParent().getMinY() > posicionMinimaY){
             movimientoSerpienteY = -1;
             movimientoSerpienteX = 0;
+            ejeY = true;
         }
+        return ejeY;
     }
 
-    public void moverAbajo()
+    public boolean moverAbajo()
     {
+
         if(cabeza.getBoundsInParent().getMaxY() < posicionMaximaY){
             movimientoSerpienteY = 1;
             movimientoSerpienteX = 0;
+            ejeY = true;
         }
+        return ejeY;
     }
 
     public boolean comerManzana(Circle object){
@@ -105,25 +118,33 @@ public class Serpiente
 
     public void anadirA(Group scene){
         scene.getChildren().add(cabeza);
-        scene.getChildren().add(cola);
-        //for(Rectangle cola : colas){
-          //  scene.getChildren().add(cola);
-        //}
+        for(Rectangle nuevaCola : colas){
+            scene.getChildren().add(nuevaCola);
+        }
     }
 
+    public Rectangle getCabeza(){
+        return cabeza;
+    }
+    
     public void mover()
     {
-        cabeza.setTranslateX(cabeza.getTranslateX() + movimientoSerpienteX);
+        double posXCabeza = cabeza.getTranslateX();
         cabeza.setTranslateY(cabeza.getTranslateY() + movimientoSerpienteY);
-        int posicionY = (int) cabeza.getY();
-        int posicionX = (int) cabeza.getX();
+        cabeza.setTranslateX(cabeza.getTranslateX() + movimientoSerpienteX);
         for(int i = 0; i < colas.size(); i++){
-            colas.get(i).setTranslateX(posicionY + movimientoSerpienteX);
-            colas.get(i).setTranslateY(posicionX + movimientoSerpienteY);
-            posicionY =(int) colas.get(i).getY();
-            posicionX =(int) colas.get(i).getX();
+
+            if(ejeY){
+                colas.get(i).setX(colas.get(i).getX() + posXCabeza);
+                colas.get(i).setTranslateX(colas.get(i).getTranslateX() + movimientoSerpienteX);
+                colas.get(i).setTranslateY(colas.get(i).getTranslateY() + movimientoSerpienteY);
+
+            }
+            colas.get(i).setTranslateX(colas.get(i).getTranslateX() + movimientoSerpienteX);
+            colas.get(i).setTranslateY(colas.get(i).getTranslateY() + movimientoSerpienteY);
+
         }
-        if(cabeza.getBoundsInParent().getMinX() == posicionMinimaX || cabeza.getBoundsInParent().getMaxX() == posicionMaximaX
+        if(cabeza.getBoundsInParent().getMinX() == posicionMinimaX || cabeza.getBoundsInParent().getMaxX() == posicionMaximaX 
         || cabeza.getBoundsInParent().getMinY() == posicionMinimaY || cabeza.getBoundsInParent().getMaxY() == posicionMaximaY){
             movimientoSerpienteX = 0;
             movimientoSerpienteY = 0;
