@@ -13,6 +13,8 @@ import javafx.util.Duration;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.animation.Animation;
+import javafx.scene.shape.Shape;
+import javafx.scene.shape.Rectangle;
 
 /**
  * Write a description of class Partida here.
@@ -29,7 +31,6 @@ public class Partida extends Application
     private static int LONGITUD_SERPIENTE = 3;
     private static int POS_X = 350;
     private static int POS_Y = 250;
-    //private ArrayList<Serpiente> serpientes;
     private ArrayList<Manzana> manzanas;
 
     public static void main(String args[]){
@@ -47,37 +48,50 @@ public class Partida extends Application
 
         Serpiente serp = new Serpiente((int) escena.getWidth(), 0, (int) escena.getHeight(), 0);
         serp.anadirA(contenedor);
-        //serpientes.add(serp);
         puntuacion = 0;
-        Label puntos = new Label("Puntos: 0");
+        Label puntos = new Label("Puntuación: 0");
         puntos.setTranslateX(600);
         puntos.setTranslateY(460);
         puntos.setTextFill(Color.WHITE);
         contenedor.getChildren().add(puntos);
-        // Se crean las etiquetas para el tiempo y la puntuacion
+        // Se crea la etiqueta para la puntuacion
         Manzana manz = new Manzana(ANCHO_VENTANA - 20, ALTO_BARRA_INFERIOR);
         contenedor.getChildren().add(manz);
         manzanas.add(manz);
         Timeline timeline = new Timeline();
-        KeyFrame kf = new KeyFrame((Duration.seconds(0.017)), event ->{
+        KeyFrame kf = new KeyFrame((Duration.seconds(0.5)), event ->{
                     serp.mover();
 
-                    if(manzanas.get(0).comprobarChoque(serp.getCabeza()) && serp.comerManzana(manzanas.get(0))){
-                        //Serpiente nuevaSerp = new Serpiente((int) escena.getWidth(), 0, (int) escena.getHeight(), 0);
-                        //serpientes.add(nuevaSerp);
+                   // if(manzanas.isEmpty()){
+                      //  Manzana nuevaManz = new Manzana(ANCHO_VENTANA - 20, ALTO_BARRA_INFERIOR);
+                      //  contenedor.getChildren().add(nuevaManz);
+                      //  manzanas.add(nuevaManz);
+                    //}
+                    //else{
 
-                        //contenedor.getChildren().remove(0);
-                        //contenedor.getChildren().add(nuevaSerp);
-                        puntuacion = puntuacion + 10;
+                       // Shape c = Shape.intersect(manzanas.get(contador), serp.getCabeza());
+                       // double ancho = c.getBoundsInParent().getWidth();
+                       // if(ancho == -1){
 
-                        //Manzana nuevaManz = new Manzana(ANCHO_VENTANA - 20, ALTO_BARRA_INFERIOR);
-                        //contenedor.getChildren().add(nuevaManz);
-                        //manzanas.add(nuevaManz);
+                           // manzanas.remove(0);
+                           // contenedor.getChildren().remove(0);
+                          //  puntuacion = puntuacion + 10;
+                        //    puntos.setText("Puntuación: " + puntuacion);
+
+                      //  }
+
+                    //}
+                    if(serp.obtenerMinYCabeza() <= 0 || serp.obtenerMinXCabeza() <= 0
+                    || serp.obtenerMaxYCabeza() >= escena.getHeight()|| serp.obtenerMaxXCabeza() >= escena.getWidth()){
+                        timeline.stop();
+                        Label gameOver = new Label("- Game Over -");
+                        gameOver.setTextFill(Color.WHITE);
+                        contenedor.getChildren().add(gameOver);
+                        gameOver.setTranslateX(350);
+                        gameOver.setTranslateY(250);
                     }
-
                 });
-        puntos.setText("Puntuación: " + puntuacion);
-        // Añadimos todos los elementos creados al contenedor y la escena y mostramos su contenido
+
         escena.setOnKeyPressed(new EventHandler<KeyEvent>() {
                 @Override
                 public void handle(KeyEvent event) {
@@ -97,7 +111,6 @@ public class Partida extends Application
             });
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.getKeyFrames().add(kf);
-
         timeline.play();
         escenario.show();
     }
